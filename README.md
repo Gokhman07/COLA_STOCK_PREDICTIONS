@@ -1,12 +1,12 @@
 # Coca-Cola Stock Prediction & Volatility Forecasting
 
-This project analyzes and forecasts **Coca-Cola (KO)** stock behavior using both deep learning and econometric time-series models.  
-The notebook combines:
+This project analyzes and forecasts **Coca-Cola (KO)** stock behavior using deep learning and econometric time-series models.  
+The notebook compares multiple approaches:
 
-- **LSTM Neural Network** for stock price prediction  
-- **ARIMA** for baseline forecasting  
+- **Several ARIMA specifications** for price forecasting  
+- **LSTM Neural Network** for nonlinear prediction  
 - **ARCH/GARCH** for volatility forecasting  
-- Performance evaluation using multiple metrics
+- Model evaluation using forecasting error metrics
 
 ---
 
@@ -26,27 +26,41 @@ This reflects real-world finance, where returns and volatility are often modeled
 - Asset: **Coca-Cola (KO)**
 - Variable: Daily Closing Prices
 - Source: Yahoo Finance
-- Sample Size: 100+ observations
+- Daily observations used for training/testing
 
 ---
 
 # 1. Price Prediction Models
 
-## ARIMA Baseline Model
+# ARIMA Model Comparison
 
-A classical ARIMA model was fitted as a benchmark time-series model.
+Instead of relying on a single ARIMA model, the notebook tests **multiple ARIMA(p,d,q) configurations** to compare forecasting performance.
 
-### ARIMA Performance
+Examples include different lag and moving-average structures such as:
+
+- ARIMA(1,0,0)
+- ARIMA(0,0,1)
+- ARIMA(1,1,1)
+- Other candidate specifications
+
+This helps identify which structure best matches the dynamics of Coca-Cola prices.
+
+### ARIMA Findings
+
+Different ARIMA models produced different forecast accuracy levels.  
+Some specifications performed better than others, showing the importance of model selection rather than choosing ARIMA arbitrarily.
+
+Average forecasting error across tested ARIMA models was approximately:
 
 | Metric | Value |
 |---|---:|
 | MAPE | ~2.70% |
 
-ARIMA provided reasonable short-term forecasts but struggled to capture nonlinear price dynamics.
+ARIMA models provided a strong statistical baseline but were less effective than deep learning for nonlinear behavior.
 
 ---
 
-## LSTM Neural Network (Best Model)
+# LSTM Neural Network (Best Model)
 
 A Long Short-Term Memory (LSTM) model used the previous **16 closing prices** to predict the next value.
 
@@ -59,11 +73,11 @@ A Long Short-Term Memory (LSTM) model used the previous **16 closing prices** to
 | MAPE | 1.40% |
 | R² | 0.7155 |
 
-The LSTM outperformed ARIMA and produced the most accurate forecasts.
+The LSTM outperformed the tested ARIMA specifications and produced the strongest price forecasts.
 
 ---
 
-## First 10 LSTM Predictions
+# First 10 LSTM Predictions
 
 | Date | Actual | Predicted | Error |
 |---|---:|---:|---:|
@@ -82,17 +96,17 @@ The LSTM outperformed ARIMA and produced the most accurate forecasts.
 
 # 2. Volatility Forecasting with ARCH/GARCH
 
-While LSTM predicts prices, ARCH/GARCH models forecast **variance (risk)**.
+While ARIMA and LSTM focus on prices, ARCH/GARCH models forecast **variance (risk)**.
 
-This is important because financial returns often exhibit:
+Financial returns often exhibit:
 
 - Volatility clustering
 - Time-varying variance
-- Calm and turbulent market regimes
+- Calm and turbulent market periods
 
 ---
 
-## GARCH Model Structure
+# GARCH Model Structure
 
 \[
 r_t = \mu + \epsilon_t,\quad \epsilon_t \sim N(0,h_t)
@@ -106,42 +120,42 @@ Where:
 
 - \(r_t\): return  
 - \(h_t\): conditional variance  
-- \(\alpha\): shock impact  
-- \(\beta\): persistence of volatility
+- \(\alpha\): reaction to shocks  
+- \(\beta\): volatility persistence
 
 ---
 
-## Interpretation of Results
+# Interpretation
 
-If the notebook output shows:
+Typical findings in stock data:
 
-- **High β** → volatility is persistent  
-- **High α** → market reacts strongly to shocks  
-- **α + β close to 1** → long memory in volatility
+- **High β** → persistent volatility  
+- **High α** → strong reaction to new shocks  
+- **α + β close to 1** → long memory in risk
 
-This behavior is common in real financial markets.
+This confirms realistic market behavior.
 
 ---
 
-# Final Model Comparison
+# Final Comparison
 
 | Task | Best Model |
 |---|---|
 | Price Forecasting | LSTM |
-| Classical Baseline | ARIMA |
+| Classical Statistical Forecasting | Best ARIMA Specification |
 | Volatility Forecasting | GARCH |
 
 ---
 
 # Key Conclusion
 
-This notebook demonstrates that:
+This notebook shows that:
 
-- **LSTM** is stronger for nonlinear price prediction  
-- **ARIMA** is useful as an interpretable benchmark  
-- **GARCH** is essential for modeling risk and volatility  
+- Testing **multiple ARIMA models** improves statistical forecasting quality  
+- **LSTM** performs best for nonlinear price prediction  
+- **GARCH** is essential for modeling changing market risk  
 
-Using multiple model families provides a more complete financial forecasting framework.
+Using several model families creates a stronger and more realistic forecasting framework.
 
 ---
 
@@ -161,8 +175,9 @@ Using multiple model families provides a more complete financial forecasting fra
 
 # Future Improvements
 
+- Automatic ARIMA selection (AIC/BIC)  
 - GRU / Transformer models  
-- EGARCH / TGARCH for asymmetric shocks  
+- EGARCH / TGARCH  
 - Multi-step forecasting  
 - Regime-switching models  
 - Portfolio risk optimization
